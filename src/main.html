@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+    <head id="head">
+        <script src="../../webviewjavascriptbridge.js" type="text/javascript"></script>
+        <script src="/system/socket.io/socket.io.js" type="text/javascript" ></script>
+        <script src="/system/lib/edb.js" type="text/javascript" ></script>
+        <script src="/system/lib/resource.js" type="text/javascript" ></script>
+        <script src="/system/lib/cm.js" type="text/javascript" ></script>
+        <script src="../../../../../../applications/action-extras/javascripts/BrowserDetect.js" type="text/javascript" ></script>
+        <script src="/SREtask.js" type="text/javascript" ></script>
+        <script src="/SRETaskBrowserBridge.js" type="text/javascript" ></script>
+        <script src="/system-ui/src/JSBridge.js" type="text/javascript"></script>
+        <script src="../../../../frameworks/afw.js" type="text/javascript" ></script>
+        <script src="../../../../../../applications/action-extras/javascripts/jq.mobi.min.js" type="text/javascript" ></script>
+        <script src="../../../../../../applications/action-extras/javascripts/utils.js" type="text/javascript" ></script>
+
+        <script src="../../../../../../applications/action-extras/javascripts/class.js" type="text/javascript" ></script>
+        <script src="../../../../../../applications/action-extras/javascripts/action.js" type="text/javascript" ></script>
+        <script src="../../../../../../applications/action-extras/javascripts/viewmodel.js" type="text/javascript" ></script>
+
+        <script src="/common/js/widgets.js" type="text/javascript" ></script>
+        <script src="javascripts/main.js" type="text/javascript" ></script>
+
+        <link href="/common/css/widgets.css" media="screen" rel="stylesheet" type="text/css" />
+        <link href="../../../../../../applications/action-extras/css/apps.css" media="screen" rel="stylesheet" type="text/css" />
+        <link href="../snake/css/snake.css" media="screen" rel="stylesheet" type="text/css" />
+        <title>Snake</title>
+   </head>
+<body>
+  <div class="appFrame">
+
+    <canvas id="canvas"></canvas>
+
+    <table id="joystick-table">
+      <tr>
+        <td></td>
+        <td class="top-arrow" onTouchStart="SNAKE.controller.setDirection(0, -1);">&uArr;</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="left-arrow" onTouchStart="SNAKE.controller.setDirection(-1, 0);">&lArr;</td>
+        <td class="center">&#9679;</td>
+        <td class="right-arrow" onTouchStart="SNAKE.controller.setDirection(1, 0);">&rArr;</td></tr>
+      <tr>
+        <td></td>
+        <td class="bottom-arrow" onTouchStart="SNAKE.controller.setDirection(0, 1);">&dArr;</td>
+        <td></td>
+      </tr>
+    </table>
+
+    <div id="gameOverLabel"></div>
+
+  </div>
+</body>
+</html>
+
+
