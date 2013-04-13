@@ -254,7 +254,7 @@ var Game = {
 	$("#button-cell").show();
 	$("#joystick-table").hide();
 	
-	$(document).one('click', function() {
+	$(document).one('click touchstart', function() {
 	    Game.newLevel(false);
 	});
     },
@@ -291,7 +291,7 @@ var Game = {
 	$("#button-cell").show();
 	$("#joystick-table").hide();
 
-	$(document).one('click', function() {
+	$(document).one('click touchstart', function() {
             $("#info-label").hide();
 	    $("#button-cell").hide();
 	    $("#joystick-table").show();
@@ -339,7 +339,7 @@ var Game = {
 	$("#joystick-table").hide();
 	$("#button-cell").show();
 
-	$(document).one('click', function() {
+	$(document).one('click touchstart', function() {
             Game.newGame();
 	});
     },
