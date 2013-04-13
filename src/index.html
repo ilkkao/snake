@@ -6,7 +6,10 @@
 
   <script src="javascripts/main.js" type="text/javascript" ></script>
   <script src="javascripts/jquery-1.9.1.min.js" type="text/javascript" ></script>
+
   <link href="css/snake.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="css/button.css" media="screen" rel="stylesheet" type="text/css" />
+
   <title>Snake</title>
 </head>
 
@@ -18,22 +21,24 @@
     <table id="joystick-table">
       <tr>
         <td></td>
-        <td id="top-arrow" onTouchStart="Game.setDirection(0, -1);"><div class="arrow">&#x25b2;</div></td>
+        <td id="top-arrow" onClick="Game.setDirection(0, -1);" onTouchStart="Game.setDirection(0, -1);"><div class="arrow">&#x25b2;</div></td>
         <td></td>
       </tr>
       <tr>
-        <td id="left-arrow" onTouchStart="Game.setDirection(-1, 0);"><div class="arrow">&#x25c4;</div></td>
+        <td id="left-arrow" onClick="Game.setDirection(-1, 0);" onTouchStart="Game.setDirection(-1, 0);"><div class="arrow">&#x25c4;</div></td>
         <td id="center"></td>
-        <td id="right-arrow" onTouchStart="Game.setDirection(1, 0);"><div class="arrow">&#x25ba;</div></tr>
+        <td id="right-arrow" onClick="Game.setDirection(1, 0);" onTouchStart="Game.setDirection(1, 0);"><div class="arrow">&#x25ba;</div></tr>
       <tr>
         <td></td>
-        <td id="bottom-arrow" onTouchStart="Game.setDirection(0, 1);"><div class="arrow">&#x25bc;</div></td>
+        <td id="bottom-arrow" onClick="Game.setDirection(0, 1);" onTouchStart="Game.setDirection(0, 1);"><div class="arrow">&#x25bc;</div></td>
         <td></td>
       </tr>
     </table>
 
     <div id="info-container"><div id="info-label"></div></div>
     <div id="score"></div>
+
+    <div class="ddclassname" id="button-cell"></div>
 
   </div>
 </body>

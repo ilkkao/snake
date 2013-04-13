@@ -1,62 +1,70 @@
 
 "use strict";
 
-var CONSTANT = { 
+var CONST = { 
     rows: 30, 
     columns : 30,
-    blockSize: 13
+    blockSize: 13,
+    increment: 15,
+    backgroundColor: '#e0eff8'
 }
 
-var increment = 15;
-var backgroundColor = '#e0eff8';
+var comments = [
+    "Ouch!",
+    "That hurt!",
+    "Not nice!",
+    "Try harder!"
+]
 
-var lives;
-var incrementLeft;
-var snakeArray = new Array(5 + 10 * increment);
-var snakeLength;
-var headPosition;
-var speedX;
-var speedY;
-
+var snakeArray = new Array(5 + 10 * CONST.increment);
 var gameTimer;
-var gameTime;
-var gameSpeed;
+var ctx;
 
-var food = {};
-var score;
+var state = {
+    level: 0,
+    lives: 0,
+    incrementLeft: 0,
+    snakeLength: 0,
+    headPosition: 0,
+    speedX: 0,
+    speedY: 0,
+    gameTime: 0,
+    gameSpeed: 0,
+    food: {},
+    score: 0,
+}
 
-var currentLevel;
 var levels = [
-        "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" +
-	"X                            X" +
-	"X                            X" +
-	"X                            X" +
-	"X                            X" +
-	"X                            X" +
-	"X                            X" +
-	"X                            X" +
-	"X                            X" +
-	"X                            X" +
-	"X                            X" +
-	"X                            X" +
-	"X                            X" +
-	"X                            X" +
-	"X    S                       X" +
-	"X                            X" +
-	"X                            X" +
-	"X                            X" +
-	"X                            X" +
-	"X                            X" +
-	"X                            X" +
-	"X                            X" +
-	"X                            X" +
-	"X                            X" +
-	"X                            X" +
-	"X                            X" +
-	"X                            X" +
-	"X                            X" +
-	"X                            X" +
-	"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
+	"B                            B" +
+	"B                            B" +
+	"B                            B" +
+	"B                            B" +
+	"B                            B" +
+	"B                            B" +
+	"B                            B" +
+	"B                            B" +
+	"B                            B" +
+	"B                            B" +
+	"B                            B" +
+	"B                            B" +
+	"B                            B" +
+	"B    S                       B" +
+	"B                            B" +
+	"B                            B" +
+	"B                            B" +
+	"B                            B" +
+	"B                            B" +
+	"B                            B" +
+	"B                            B" +
+	"B                            B" +
+	"B                            B" +
+	"B                            B" +
+	"B                            B" +
+	"B                            B" +
+	"B                            B" +
+	"B                            B" +
+	"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
         "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" +
 	"X                            X" +
 	"X                            X" +
@@ -211,11 +219,8 @@ var levels = [
 
 var Game = {
     init: function() {
-        $("#info-label").hide();
-
 	var marginLeft = Math.floor(window.innerWidth < 400 ? 0 : 
 				    (window.innerWidth / 2 - 400 / 2));
-	console.log("marginLeft: " + marginLeft);
 	document.getElementById('main').style.left = marginLeft + "px";
 
         document.onkeydown = function(e) {
@@ -232,90 +237,116 @@ var Game = {
             }
         }
 
-        Game.newGame();
-    },
-
-    addFood: function() {
-	food.number--;
-
-        do {
-            food.x = Math.floor(Math.random() * CONSTANT.columns);
-            food.y = Math.floor(Math.random() * CONSTANT.rows);
-        } while (!Game.freeSpot(food.x, food.y));
-
-        Game.drawDotCanvas(food.x, food.y, 2);	
+	Game.newGame();
     },
 
     newGame: function() {
-	currentLevel = 0;
-        gameTime = 0;
-	score = 0;
-	lives = 3;
-	Game.newLevel();
+	state.level = 0;
+        state.gameTime = 0;
+	state.score = 0;
+	state.lives = 3;
+
+	Game.showText("<br><br><b><span style=\"font-size:100px\">" +
+		      "SNAKE</span></b><br><br>" +
+		      "<span style=\"font-size:35px\">v0.2</span>");
+
+	$("#button-cell").html("NEW GAME");
+	$("#button-cell").show();
+	$("#joystick-table").hide();
+	
+	$(document).one('click', function() {
+	    Game.newLevel(false);
+	});
     },
     
-    newLevel: function() {
-	food.number = 10;
-	snakeLength = 5;
-	incrementLeft = 0;
-        headPosition = snakeLength - 1;
-        speedX = 1;
-        speedY = 0;
-	gameSpeed = 170;
+    newLevel: function(died) {
+	state.food.number = 10;
+	state.snakeLength = 5;
+	state.incrementLeft = 0;
+        state.headPosition = state.snakeLength - 1;
+        state.speedX = 1;
+        state.speedY = 0;
+	state.gameSpeed = 150;
 
-	var startingPoint = levels[currentLevel].indexOf('S');
+	var startingPoint = levels[state.level].indexOf('S');
 
         //Init snakeArray
-        for (var i = 0; i < snakeLength; i++) {
+        for (var i = 0; i < state.snakeLength; i++) {
             snakeArray[i] = { 
-		x: startingPoint % CONSTANT.columns - 1, 
-		y: Math.floor(startingPoint / CONSTANT.columns) 
+		x: startingPoint % CONST.columns - 1, 
+		y: Math.floor(startingPoint / CONST.columns) 
 	    };
         }
 
-        $("#info-label").html("<br><br><b>LEVEL " + (currentLevel + 1) + 
-			      "</b><br><br><span style=\"font-size:35px\">Lives: " +
-			      lives + "</span>");
+        Game.showText("<br><br><b>LEVEL " + (state.level + 1) + 
+		      "</b><br><br><span style=\"font-size:35px\">Lives left: " +
+		      state.lives + "</span>");
 
-	Game.drawLevel(0);
-        $("#info-label").show();
+	if (died) {
+	    $("#button-cell").html("TRY AGAIN");
+	} else {
+	    $("#button-cell").html("START!");
+	}
 
-        setTimeout(function() {
+	$("#button-cell").show();
+	$("#joystick-table").hide();
+
+	$(document).one('click', function() {
             $("#info-label").hide();
-	    Game.drawLevel(currentLevel);
+	    $("#button-cell").hide();
+	    $("#joystick-table").show();
+	    
+	    Game.drawLevel(state.level);
 	    
             Game.addFood();
-            gameTimer = setTimeout(Game.moveSnake, gameSpeed);
-        }, 2000);
+            gameTimer = setTimeout(Game.moveSnake, state.gameSpeed);
+        });
     },
 
     drawLevel: function(level) {
 	Game.clearCanvas();
 	//Draw walls
-        for(var x = 0; x < CONSTANT.columns; x++) {
-	    for(var y = 0; y < CONSTANT.rows; y++) {
-                if (levels[level].charAt(x + CONSTANT.columns * y) == "X") {
+        for(var x = 0; x < CONST.columns; x++) {
+	    for(var y = 0; y < CONST.rows; y++) {
+		var type = levels[level].charAt(x + CONST.columns * y); 
+
+                if (type == "X") {
 		    Game.drawDotCanvas(x, y, 3);
+		} else if (type == "B") {
+		    Game.drawDotCanvas(x, y, 4);
+		} else {
+		    Game.drawDotCanvas(x, y, 0);
 		}
 	    }
         }
     },
 
-    gameOver: function() {
-        console.log("gameOver()");
-        $("#info-label").html("<br><br>GAME OVER<br><br>Score: " + score);
-	Game.drawLevel(0);
-        $("#info-label").show();
+    addFood: function() {
+	state.food.number--;
 
-        setTimeout(function() {
-            $("#info-label").hide();
+        do {
+            state.food.x = Math.floor(Math.random() * CONST.columns);
+            state.food.y = Math.floor(Math.random() * CONST.rows);
+        } while (!Game.freeSpot(state.food.x, state.food.y));
+
+        Game.drawDotCanvas(state.food.x, state.food.y, 2, state.food.number);	
+    },
+
+    gameOver: function() {
+        Game.showText("<br><br>GAME OVER<br><br>Score: " + state.score);
+
+	$("#button-cell").html("OK");
+	$("#joystick-table").hide();
+	$("#button-cell").show();
+
+	$(document).one('click', function() {
             Game.newGame();
-        }, 3000);
+	});
     },
 
     setDirection: function(x, y) {
-        speedX = x;
-        speedY = y;
+        state.speedX = x;
+        state.speedY = y;
 
 	var direction = "top";
 	
@@ -326,136 +357,143 @@ var Game = {
 	else if (x ==0 && y == 1)
 	    direction = "bottom";
 
-        document.getElementById(direction + '-arrow').style.opacity = 0.1;
+        document.getElementById(direction + '-arrow').style.opacity = 0.4;
 
         setTimeout(function() {
-            document.getElementById(direction + '-arrow').style.opacity = 0.3;
+            document.getElementById(direction + '-arrow').style.opacity = 0.7;
         }, 300);
     },
 
     moveSnake: function() {
-        if (++gameTime % 50 == 0) {
-            gameSpeed -= 5;
+        if (++state.gameTime % 50 == 0) {
+            state.gameSpeed -= 5;
         }
 
         var newHead = {
-	    x: snakeArray[headPosition].x + speedX,
-            y: snakeArray[headPosition].y + speedY
+	    x: snakeArray[state.headPosition].x + state.speedX,
+            y: snakeArray[state.headPosition].y + state.speedY
 	};
 
-	//Move head
-        if (++headPosition == snakeLength) {
-            headPosition = 0;
+	//Move head position
+        if (++state.headPosition == state.snakeLength) {
+            state.headPosition = 0;
         }
 
         //Check food
-        if (newHead.x == food.x && newHead.y == food.y) {
-	    if (food.number == 1) {
-		if (++currentLevel == levels.length) {
-		    $("#info-label").html("<br><br>PERFECT GAME!<br><br>Score: " + score);
-		    Game.drawLevel(0);
-		    $("#info-label").show();
+        if (newHead.x == state.food.x && newHead.y == state.food.y) {
+	    if (state.food.number == 1) {
+		if (++state.level == levels.length) {
+		    Game.showText("<br><br>PERFECT GAME!<br><br>Score: " + state.score);
 		} else {
-		    Game.newLevel();
+		    Game.newLevel(false);
 		    return;
 		}
 	    } else {
-		score += 10;
-		incrementLeft += increment;
+		state.score += 10;
+		state.incrementLeft += CONST.increment;
 		Game.addFood();
 	    }
         }
 
         //Check that snake hasn't collided
         if (!Game.freeSpot(newHead.x, newHead.y)) {
-	    if (--lives == 0) {
+	    if (--state.lives == 0) {
 		Game.gameOver();
 	    } else {
-		Game.newLevel();
+		var text = comments[Math.floor(Math.random()*comments.length)];
+
+		Game.showText("<br><br><b style=\"color:#dddddd\">" + text + "</b><br><br>");
+		setTimeout(function() {
+		    Game.newLevel(true);
+		}, 1700);
 	    }
         } else {
-	    if (incrementLeft > 0) {
+	    if (state.incrementLeft > 0) {
 		//Make snake longer
-		snakeArray.splice(headPosition, 0, newHead);
-		snakeLength++;
-		incrementLeft--;
+		snakeArray.splice(state.headPosition, 0, newHead);
+		state.snakeLength++;
+		state.incrementLeft--;
 	    } else {
 		//Remove tail
-		Game.drawDotCanvas(snakeArray[headPosition].x, snakeArray[headPosition].y, 0);
-		snakeArray[headPosition] = newHead;
+		Game.drawDotCanvas(snakeArray[state.headPosition].x, 
+				   snakeArray[state.headPosition].y, 0);
+		snakeArray[state.headPosition] = newHead;
 	    }
 
             //Draw new head
-            Game.drawDotCanvas(snakeArray[headPosition].x, snakeArray[headPosition].y, 1);
+            Game.drawDotCanvas(snakeArray[state.headPosition].x,
+			       snakeArray[state.headPosition].y, 1);
 
-            gameTimer = setTimeout(Game.moveSnake, gameSpeed);
+            gameTimer = setTimeout(Game.moveSnake, state.gameSpeed);
         }
     },
 
     freeSpot: function(x, y) {
-        //TBD: Something wrong tail detection is not perfect
-        for (var i = 0; i < snakeLength; i++) {
+        for (var i = 0; i < state.snakeLength; i++) {
             if (snakeArray[i].x == x && snakeArray[i].y == y) {
                 return false;
             }
         }
 
-	if (levels[currentLevel].charAt(x + CONSTANT.columns * y) == "X") {
+	var type = levels[state.level].charAt(x + CONST.columns * y);
+
+	if (type == "X" || type == "B") {
 	    return false;
 	}
 
         return true;
     },
 
-    drawDotCanvas: function(x, y, type) {
-        // type:
-        //
-        // 0 = background
-        // 1 = snake
-        // 2 = food
-	// 3 = wall
+    // Type:
+    // 0 = background
+    // 1 = snake
+    // 2 = food
+    // 3 = wall
+    // 4 = wall 2
+    drawDotCanvas: function(x, y, type, number) {
+	var margin = 0;
 
-        var canvas = document.getElementById('canvas');
+        ctx.clearRect(CONST.blockSize * x, CONST.blockSize * y, CONST.blockSize - margin,
+		      CONST.blockSize - margin);
 
-        if (canvas.getContext) {
-            var ctx = canvas.getContext("2d");
-	    var margin = 0;
-
-            if (type == 0) {
-                ctx.fillStyle = backgroundColor; // set canvas background color
-	    } else if (type == 1) {
-                ctx.fillStyle = '#22aa77';
-	    } else if (type == 2) {
-                ctx.fillStyle = '#ff0000';
-	    } else if (type == 3) {
-                ctx.fillStyle = '#000000';
-	    }
-
-            ctx.fillRect(CONSTANT.blockSize * x, CONSTANT.blockSize * y, CONSTANT.blockSize - margin,
-			 CONSTANT.blockSize - margin); // now fill the canvas
-
-	    if (type == 2) {
-		ctx.fillStyle = '#ffffff';
-		ctx.fillText(food.number, CONSTANT.blockSize * x + CONSTANT.blockSize / 3, CONSTANT.blockSize * y +
-			    CONSTANT.blockSize / 1.15);
-	    }
-        }
+        if (type == 0) {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
+	} else if (type == 1) {
+            ctx.fillStyle = '#22aa77';
+	} else if (type == 2) {
+            ctx.fillStyle = '#ff0000';
+	} else if (type == 3) {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+	} else if (type == 4) {
+//	    ctx.globalAlpha=0.5;
+            ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+	}
+	
+        ctx.fillRect(CONST.blockSize * x, CONST.blockSize * y, CONST.blockSize - margin,
+		     CONST.blockSize - margin);
+	
+	if (type == 2) {
+	    ctx.fillStyle = '#ffffff';
+	    ctx.fillText(number, CONST.blockSize * x + CONST.blockSize / 3, 
+			 CONST.blockSize * y + CONST.blockSize / 1.15);
+	}
     },
 
     clearCanvas: function() {
-        var canvas = document.getElementById('canvas');
+	ctx.clearRect(0, 0, CONST.blockSize * CONST.columns, CONST.blockSize *
+		     CONST.rows + 1);
+    },
 
-        if (canvas.getContext) {
-            var ctx = canvas.getContext("2d");
-            ctx.fillStyle = backgroundColor; // set canvas background color
-            ctx.fillRect(0, 0, CONSTANT.blockSize * CONSTANT.columns, CONSTANT.blockSize *
-			 CONSTANT.rows + 1); // now fill the canvas
-        }
+    showText: function(html) {
+        $("#info-label").html(html);
+	Game.drawLevel(0);
+        $("#info-label").show();
     }
 }
 
 window.onload = function() {
     "use strict";
+    ctx = document.getElementById('canvas').getContext("2d");
     Game.init();
 };
 
