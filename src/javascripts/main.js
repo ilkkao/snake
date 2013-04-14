@@ -247,7 +247,7 @@ var Game = {
 	    if (state.state == "NEW_GAME") {
 		state.state = "";
 		document.getElementById('canvas').style.backgroundImage =
-		    "url('images/level-background.png ')";
+		    "url('images/level-background.jpg')";
 		Game.newLevel();
 	    } else if (state.state == "PLAYER_DIED") {
 		state.state = "";
@@ -258,6 +258,7 @@ var Game = {
 	    }
 	});
 
+	$("#main").show();
 	Game.newGame();
 	console.log("Init done.");
     },
@@ -268,7 +269,7 @@ var Game = {
 	state.score = 0;
 	state.lives = 3;
 
-	document.getElementById('canvas').style.backgroundImage = "url('images/logo.png')";
+	document.getElementById('canvas').style.backgroundImage = "url('images/logo.jpg')";
 
 	var max = 6;
 	var a = state.highScore.toString().split(), zeroesToAdd = max - a.length;

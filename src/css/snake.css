@@ -12,8 +12,9 @@ body
 
 #main 
 {
+    display: none;
     position: absolute;
-    background-image:url('../images/cover.png');
+    background-image:url('../images/cover.jpg');
     background-repeat:repeat-y;
     width: 400px;
     height: 800px;
@@ -56,6 +57,7 @@ body
 
 #joystick
 {
+    display: none;
     border-collapse: collapse;
     position: absolute;
     top: 452px;
@@ -81,6 +83,7 @@ body
 
 #button
 {
+    display: none;
     position: absolute;
     top: 550px;
     left: 55px;
