@@ -548,4 +548,3 @@ window.onload = function() {
     ctx = document.getElementById('canvas').getContext("2d");
     Game.init();
 };
-

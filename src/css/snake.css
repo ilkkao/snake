@@ -75,12 +75,6 @@ body
     text-shadow:2px 2px 0px #ffffff;
 }
 
-#left-arrow, #top-arrow, #right-arrow, #bottom-arrow, #center 
-{
-    width: 93px;
-    height: 93px;
-}
-
 #button
 {
     display: none;
@@ -90,7 +84,7 @@ body
     height: 80px;
     width: 300px;
     color: #666666;
-    background-image:url('../images/button.png');
+    background-image: url('../images/button.png');
     font-size: 35px;
     text-align: center;
     font-weight:bold;
@@ -98,4 +92,28 @@ body
     text-decoration:none;
     text-shadow:2px 2px 0px #ffffff;
     line-height: 80px;
+}
+
+#preload-dummy1
+{
+    background-image: url('../images/level-background.jpg');
+    top: -9999px;
+}
+
+#preload-dummy2
+{
+    background-image: url('../images/logo.jpg');
+    top: -9999px;
+}
+
+#preload-dummy3
+{
+    background-image: url('../images/joystick.png');
+    top: -9999px;
+}
+
+#preload-dummy4
+{
+    background-image: url('../images/button.png');
+    top: -9999px;
 }
