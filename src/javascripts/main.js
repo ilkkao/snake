@@ -32,6 +32,7 @@ var state = {
     gameSpeed: 0,
     food: {},
     score: 0,
+    state: ""
 }
 
 var levels = [
@@ -237,6 +238,26 @@ var Game = {
             }
         }
 
+	$("#button-cell").click(function() {
+	    console.log("Button clicked in state: " + state.state);
+
+	    if (state.state == "NEW_GAME") {
+		state.state = "";
+		Game.newLevel(false);
+	    } else if (state.state == "START_PLAY") {
+		state.state = "";
+		$("#info-label").hide();
+		$("#button-cell").hide();
+		$("#joystick-table").show();
+		
+		Game.drawLevel(state.level);
+		
+		Game.addFood();
+		gameTimer = setTimeout(Game.moveSnake, state.gameSpeed);
+		console.log("Started gameplay for level: " + state.level);
+	    }
+	});
+
 	Game.newGame();
     },
 
@@ -254,9 +275,7 @@ var Game = {
 	$("#button-cell").show();
 	$("#joystick-table").hide();
 	
-	$(document).one('click touchstart', function() {
-	    Game.newLevel(false);
-	});
+	state.state = "NEW_GAME";
     },
     
     newLevel: function(died) {
@@ -267,6 +286,8 @@ var Game = {
         state.speedX = 1;
         state.speedY = 0;
 	state.gameSpeed = 150;
+
+	console.log("Showing level info screen: " + state.level);
 
 	var startingPoint = levels[state.level].indexOf('S');
 
@@ -291,16 +312,7 @@ var Game = {
 	$("#button-cell").show();
 	$("#joystick-table").hide();
 
-	$(document).one('click touchstart', function() {
-            $("#info-label").hide();
-	    $("#button-cell").hide();
-	    $("#joystick-table").show();
-	    
-	    Game.drawLevel(state.level);
-	    
-            Game.addFood();
-            gameTimer = setTimeout(Game.moveSnake, state.gameSpeed);
-        });
+	state.state = "START_PLAY";
     },
 
     drawLevel: function(level) {
