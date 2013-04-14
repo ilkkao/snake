@@ -20,6 +20,8 @@ var snakeArray = new Array(5 + 10 * CONST.increment);
 var gameTimer;
 var ctx;
 
+var isTouchDevice = 'ontouchstart' in document.documentElement;
+
 var state = {
     level: 0,
     lives: 0,
@@ -239,7 +241,7 @@ var Game = {
             }
         }
 
-	$("#button-cell").click(function() {
+	$("#button").click(function() {
 	    console.log("Button clicked in state: " + state.state);
 
 	    if (state.state == "NEW_GAME") {
@@ -277,9 +279,9 @@ var Game = {
 		      "</span></b>" +
 		      "<span style=\"color:#dddddd;font-family:arial;text-shadow:2px 2px 0px #777777;font-size:25px\"><br>High Score: " + highScoreText + "</span>");
 
-	$("#button-cell").html("NEW GAME");
-	$("#button-cell").show();
-	$("#joystick-table").hide();
+	$("#button").html("NEW GAME");
+	$("#button").show();
+	$("#joystick").hide();
 	
 	state.state = "NEW_GAME";
     },
@@ -308,8 +310,8 @@ var Game = {
 	var counter = 3;
 	Game.showWaitScreen(counter);
 
-	$("#button-cell").hide();
-	$("#joystick-table").show();
+	$("#button").hide();
+	$("#joystick").show();
 
 	var timeoutWaitScreen = function() {
 	    counter--;
@@ -317,8 +319,8 @@ var Game = {
 	    if (counter == 0) {
 		state.state = "";
 		$("#info-label").hide();
-		$("#button-cell").hide();
-		$("#joystick-table").show();
+		$("#button").hide();
+		$("#joystick").show();
 		
 		Game.drawLevel(state.level);
 		
@@ -380,14 +382,18 @@ var Game = {
 	
         Game.showText("<br><br>GAME OVER<span style=\"font-size:30px\"><br><br>Score: " + state.score + highScoreText + "</span>");
 
-	$("#button-cell").html("OK");
-	$("#joystick-table").hide();
-	$("#button-cell").show();
+	$("#button").html("OK");
+	$("#joystick").hide();
+	$("#button").show();
 
 	state.state = "GAME_OVER";
     },
 
-    setDirection: function(x, y) {
+    setDirection: function(x, y, click) {
+	if (isTouchDevice && click)
+	    return;
+
+
         state.speedX = x;
         state.speedY = y;
 
@@ -446,9 +452,9 @@ var Game = {
 		var text = comments[Math.floor(Math.random()*comments.length)];
 
 		Game.showText("<br><br><b style=\"color:#dddddd\">" + text + "</b><br><br>");
-		$("#button-cell").html("TRY AGAIN");
-		$("#button-cell").show();
-		$("#joystick-table").hide();
+		$("#button").html("TRY AGAIN");
+		$("#button").show();
+		$("#joystick").hide();
 
 		state.state = "PLAYER_DIED";
 	    }
