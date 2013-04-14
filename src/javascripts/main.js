@@ -32,6 +32,7 @@ var state = {
     gameSpeed: 0,
     food: {},
     score: 0,
+    highScore: 0,
     state: ""
 }
 
@@ -243,6 +244,8 @@ var Game = {
 
 	    if (state.state == "NEW_GAME") {
 		state.state = "";
+		document.getElementById('canvas').style.backgroundImage =
+		    "url('images/level-background.png ')";
 		Game.newLevel();
 	    } else if (state.state == "PLAYER_DIED") {
 		state.state = "";
@@ -263,9 +266,16 @@ var Game = {
 	state.score = 0;
 	state.lives = 3;
 
+	document.getElementById('canvas').style.backgroundImage = "url('images/logo.png')";
+
+	var max = 6;
+	var a = state.highScore.toString().split(), zeroesToAdd = max - a.length;
+	while(zeroesToAdd--) a.unshift("0");
+	var highScoreText = a.join("");
+
 	Game.showText("<br><br><b><span style=\"font-size:100px\">" +
-		      "SNAKE</span></b><br><br>" +
-		      "<span style=\"font-size:35px\">v0.2</span>");
+		      "</span></b>" +
+		      "<span style=\"color:#dddddd;font-family:arial;text-shadow:2px 2px 0px #777777;font-size:25px\"><br>High Score: " + highScoreText + "</span>");
 
 	$("#button-cell").html("NEW GAME");
 	$("#button-cell").show();
@@ -361,7 +371,14 @@ var Game = {
     },
 
     gameOver: function() {
-        Game.showText("<br><br>GAME OVER<br><br>Score: " + state.score);
+	var highScoreText = "";
+
+	if (state.highScore < state.score) {
+	    state.highScore = state.score;
+	    highScoreText = "<br>New High Score!";
+	}
+	
+        Game.showText("<br><br>GAME OVER<span style=\"font-size:30px\"><br><br>Score: " + state.score + highScoreText + "</span>");
 
 	$("#button-cell").html("OK");
 	$("#joystick-table").hide();
