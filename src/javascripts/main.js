@@ -243,22 +243,18 @@ var Game = {
 
 	    if (state.state == "NEW_GAME") {
 		state.state = "";
-		Game.newLevel(false);
-	    } else if (state.state == "START_PLAY") {
+		Game.newLevel();
+	    } else if (state.state == "PLAYER_DIED") {
 		state.state = "";
-		$("#info-label").hide();
-		$("#button-cell").hide();
-		$("#joystick-table").show();
-		
-		Game.drawLevel(state.level);
-		
-		Game.addFood();
-		gameTimer = setTimeout(Game.moveSnake, state.gameSpeed);
-		console.log("Started gameplay for level: " + state.level);
+		Game.newLevel();
+	    } else if (state.state == "GAME_OVER") {
+		state.state = "";
+		Game.newGame();
 	    }
 	});
 
 	Game.newGame();
+	console.log("Init done.");
     },
 
     newGame: function() {
@@ -278,7 +274,7 @@ var Game = {
 	state.state = "NEW_GAME";
     },
     
-    newLevel: function(died) {
+    newLevel: function() {
 	state.food.number = 10;
 	state.snakeLength = 5;
 	state.incrementLeft = 0;
@@ -299,20 +295,40 @@ var Game = {
 	    };
         }
 
+	var counter = 3;
+	Game.showWaitScreen(counter);
+
+	$("#button-cell").hide();
+	$("#joystick-table").show();
+
+	var timeoutWaitScreen = function() {
+	    counter--;
+	
+	    if (counter == 0) {
+		state.state = "";
+		$("#info-label").hide();
+		$("#button-cell").hide();
+		$("#joystick-table").show();
+		
+		Game.drawLevel(state.level);
+		
+		Game.addFood();
+		gameTimer = setTimeout(Game.moveSnake, state.gameSpeed);
+		console.log("Started gameplay for level: " + state.level);
+	    } else {
+		Game.showWaitScreen(counter);
+		setTimeout(timeoutWaitScreen, 1000);
+	    }
+	};
+
+	setTimeout(timeoutWaitScreen, 1000);
+    },
+
+    showWaitScreen: function(time) {
         Game.showText("<br><br><b>LEVEL " + (state.level + 1) + 
-		      "</b><br><br><span style=\"font-size:35px\">Lives left: " +
-		      state.lives + "</span>");
-
-	if (died) {
-	    $("#button-cell").html("TRY AGAIN");
-	} else {
-	    $("#button-cell").html("START!");
-	}
-
-	$("#button-cell").show();
-	$("#joystick-table").hide();
-
-	state.state = "START_PLAY";
+		      "</b><br><br><span style=\"font-family: arial;font-size:35px\">" +
+		      time + "</span><br><span style=\"font-family: arial;font-size:25px\">" +
+		      "Lives left: " + state.lives + "</span>");
     },
 
     drawLevel: function(level) {
@@ -351,9 +367,7 @@ var Game = {
 	$("#joystick-table").hide();
 	$("#button-cell").show();
 
-	$(document).one('click touchstart', function() {
-            Game.newGame();
-	});
+	state.state = "GAME_OVER";
     },
 
     setDirection: function(x, y) {
@@ -415,9 +429,11 @@ var Game = {
 		var text = comments[Math.floor(Math.random()*comments.length)];
 
 		Game.showText("<br><br><b style=\"color:#dddddd\">" + text + "</b><br><br>");
-		setTimeout(function() {
-		    Game.newLevel(true);
-		}, 1700);
+		$("#button-cell").html("TRY AGAIN");
+		$("#button-cell").show();
+		$("#joystick-table").hide();
+
+		state.state = "PLAYER_DIED";
 	    }
         } else {
 	    if (state.incrementLeft > 0) {
