@@ -16,16 +16,14 @@ var comments = [
     "Try harder!"
 ];
 
-var snakeArray = new Array(5 + 10 * CONST.increment);
 var gameTimer;
 var ctx;
-
-var isTouchDevice = 'ontouchstart' in document.documentElement;
 
 var state = {
     level: 0,
     lives: 0,
     incrementLeft: 0,
+    snakeArray: 0,
     snakeLength: 0,
     headPosition: 0,
     speedX: 0,
@@ -259,6 +257,9 @@ var Game = {
         });
 
         $("#main").show();
+
+        state.snakeArray = new Array(5 + 10 * CONST.increment);
+
         Game.newGame();
         console.log("Init done.");
     },
@@ -304,7 +305,7 @@ var Game = {
 
         //Init snakeArray
         for (var i = 0; i < state.snakeLength; i++) {
-            snakeArray[i] = {
+            state.snakeArray[i] = {
                 x: startingPoint % CONST.columns - 1,
                 y: Math.floor(startingPoint / CONST.columns)
             };
@@ -395,6 +396,8 @@ var Game = {
     },
 
     setDirection: function(x, y, click) {
+        var isTouchDevice = 'ontouchstart' in document.documentElement;
+
         if (isTouchDevice && click)
             return;
 
@@ -423,8 +426,8 @@ var Game = {
         }
 
         var newHead = {
-            x: snakeArray[state.headPosition].x + state.speedX,
-            y: snakeArray[state.headPosition].y + state.speedY
+            x: state.snakeArray[state.headPosition].x + state.speedX,
+            y: state.snakeArray[state.headPosition].y + state.speedY
         };
 
         //Move head position
@@ -467,19 +470,19 @@ var Game = {
         } else {
             if (state.incrementLeft > 0) {
                 //Make snake longer
-                snakeArray.splice(state.headPosition, 0, newHead);
+                state.snakeArray.splice(state.headPosition, 0, newHead);
                 state.snakeLength++;
                 state.incrementLeft--;
             } else {
                 //Remove tail
-                Game.drawDotCanvas(snakeArray[state.headPosition].x,
-                                   snakeArray[state.headPosition].y, 0);
-                snakeArray[state.headPosition] = newHead;
+                Game.drawDotCanvas(state.snakeArray[state.headPosition].x,
+                                   state.snakeArray[state.headPosition].y, 0);
+                state.snakeArray[state.headPosition] = newHead;
             }
 
             //Draw new head
-            Game.drawDotCanvas(snakeArray[state.headPosition].x,
-                               snakeArray[state.headPosition].y, 1);
+            Game.drawDotCanvas(state.snakeArray[state.headPosition].x,
+                               state.snakeArray[state.headPosition].y, 1);
 
             gameTimer = setTimeout(Game.moveSnake, state.gameSpeed);
         }
@@ -487,7 +490,7 @@ var Game = {
 
     freeSpot: function(x, y) {
         for (var i = 0; i < state.snakeLength; i++) {
-            if (snakeArray[i].x == x && snakeArray[i].y == y) {
+            if (state.snakeArray[i].x == x && state.snakeArray[i].y == y) {
                 return false;
             }
         }
