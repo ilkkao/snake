@@ -51,6 +51,11 @@ var levels = [
         "B                            B" +
         "B                            B" +
         "B                            B" +
+        "B     XXXXXXXXXXXXXXXXXXX    B" +
+        "B                            B" +
+        "B                            B" +
+        "B                            B" +
+        "B                            B" +
         "B    S                       B" +
         "B                            B" +
         "B                            B" +
@@ -61,42 +66,7 @@ var levels = [
         "B                            B" +
         "B                            B" +
         "B                            B" +
-        "B                            B" +
-        "B                            B" +
-        "B                            B" +
-        "B                            B" +
-        "B                            B" +
         "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
-        "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" +
-        "X                            X" +
-        "X                            X" +
-        "X                            X" +
-        "X                            X" +
-        "X                            X" +
-        "X                            X" +
-        "X                            X" +
-        "X                            X" +
-        "X                            X" +
-        "X                            X" +
-        "X                            X" +
-        "X                            X" +
-        "X                            X" +
-        "X     XXXXXXXXXXXXXXXXXX     X" +
-        "X                            X" +
-        "X                            X" +
-        "X                            X" +
-        "X                            X" +
-        "X          S                 X" +
-        "X                            X" +
-        "X                            X" +
-        "X                            X" +
-        "X                            X" +
-        "X                            X" +
-        "X                            X" +
-        "X                            X" +
-        "X                            X" +
-        "X                            X" +
-        "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
         "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" +
         "X                            X" +
         "X                            X" +
@@ -155,6 +125,36 @@ var levels = [
         "X                    X       X" +
         "X    XXXXXXXXXXXXXXXXX       X" +
         "X                            X" +
+        "X                            X" +
+        "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" +
+        "X                            X" +
+        "X              X             X" +
+        "X             X       X      X" +
+        "X            X        X      X" +
+        "X           X         X      X" +
+        "X          X          X      X" +
+        "X         X           X      X" +
+        "X        X            X      X" +
+        "X       X             X      X" +
+        "X      X              X      X" +
+        "X     X      XXXXXXXXXX      X" +
+        "X                            X" +
+        "X                            X" +
+        "X     XXXXXXXXXXXXXXXXXX     X" +
+        "X                            X" +
+        "X                            X" +
+        "X                   X        X" +
+        "X                  X         X" +
+        "X          S      X          X" +
+        "X                X           X" +
+        "X               X            X" +
+        "X              X             X" +
+        "X             X              X" +
+        "X            X         X     X" +
+        "X           X          X     X" +
+        "X          X           X     X" +
+        "X         X      XXXXXXX     X" +
         "X                            X" +
         "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
         "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" +
@@ -277,11 +277,13 @@ var Game = {
         var a = state.highScore.toString().split(), zeroesToAdd = max - a.length;
         while(zeroesToAdd--) a.unshift("0");
         var highScoreText = a.join("");
+        var levelAmount = levels.length;
 
         Game.showText("<br><br><b><span style=\"font-size:100px\"></span></b>" +
                       "<span style=\"color:#dddddd;font-family:arial;" +
                       "text-shadow:2px 2px 0px #777777;font-size:25px\">" +
-                      "<br>High Score: " + highScoreText + "</span>");
+                      "<br>High Score: " + highScoreText +
+                      "<br>Levels installed: " + levelAmount + "</span>");
 
         $("#button").html("NEW GAME");
         $("#button").show();
@@ -341,9 +343,12 @@ var Game = {
     },
 
     showWaitScreen: function(time) {
-        Game.showText("<br><br><b>LEVEL " + (state.level + 1) + "</b><br><br>" +
+        Game.showText("<br><br><b>LEVEL " + (state.level + 1) + "</b><br>" +
+                      "<span style=\"font-family: arial;font-size:25px\">" +
+                      "Collect ten <span style=\"color:#ff5555\">red</span>" +
+                      "dots!</span><br>" +
                       "<span style=\"font-family: arial;font-size:35px\">" +
-                      time + "</span><br><span style=\"font-family:arial;" +
+                      time + "<br></span><span style=\"font-family:arial;" +
                       "font-size:25px\">" + "Lives left: " + state.lives +
                       "</span>");
     },
@@ -546,7 +551,16 @@ var Game = {
 
     showText: function(html) {
         $("#info-label").html(html);
-        Game.drawLevel(0);
+        for(var x = 0; x < CONST.columns; x++) {
+            for(var y = 0; y < CONST.rows; y++) {
+                if (x == 0 || y == 0 || x == CONST.columns - 1 ||
+                    y == CONST.rows - 1) {
+                    Game.drawDotCanvas(x, y, 4);
+                } else {
+                    Game.drawDotCanvas(x, y, 0);
+                }
+            }
+        }
         $("#info-label").show();
     }
 };
