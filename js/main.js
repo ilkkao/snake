@@ -245,7 +245,7 @@ var Game = {
             if (state.state == "NEW_GAME") {
                 state.state = "";
                 document.getElementById('canvas').style.backgroundImage =
-                    "url('images/level-background.jpg')";
+                    "url('img/level-background.jpg')";
                 Game.newLevel();
             } else if (state.state == "PLAYER_DIED") {
                 state.state = "";
@@ -271,7 +271,7 @@ var Game = {
         state.lives = 3;
 
         document.getElementById('canvas').style.backgroundImage =
-            "url('images/logo.jpg')";
+            "url('img/logo.jpg')";
 
         var max = 6;
         var a = state.highScore.toString().split(), zeroesToAdd = max - a.length;
