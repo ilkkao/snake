@@ -346,7 +346,7 @@ var Game = {
         Game.showText("<br><br><b>LEVEL " + (state.level + 1) + "</b><br>" +
                       "<span style=\"font-family: arial;font-size:25px\">" +
                       "Collect ten <span style=\"color:#ff5555\">red</span>" +
-                      "dots!</span><br>" +
+                      " dots!</span><br>" +
                       "<span style=\"font-family: arial;font-size:35px\">" +
                       time + "<br></span><span style=\"font-family:arial;" +
                       "font-size:25px\">" + "Lives left: " + state.lives +
