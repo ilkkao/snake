@@ -1,4 +1,3 @@
-
 "use strict";
 
 var CONST = {
@@ -221,9 +220,9 @@ var levels = [
 
 var Game = {
     init: function() {
-        var marginLeft = Math.floor(window.innerWidth < 400 ? 0 :
-                                    (window.innerWidth / 2 - 400 / 2));
-        document.getElementById('main').style.left = marginLeft + "px";
+        var marginLeft = Math.floor($(window).width() < 400 ? 0 :
+                                    ($(window).width() / 2 - 400 / 2));
+        $("#main").css("left", marginLeft + "px");
 
         $(document).keydown(function(event) {
             if (event.which == 37) {
@@ -242,8 +241,8 @@ var Game = {
 
             if (state.state == "NEW_GAME") {
                 state.state = "";
-                document.getElementById('canvas').style.backgroundImage =
-                    "url('img/level-background.jpg')";
+                $("#canvas").css("backgroundImage",
+                                 "url('img/level-background.jpg')");
                 Game.newLevel();
             } else if (state.state == "PLAYER_DIED") {
                 state.state = "";
@@ -254,11 +253,11 @@ var Game = {
             }
         });
 
-        $("#main").show();
-
         state.snakeArray = new Array(5 + 10 * CONST.increment);
 
+        $("#main").show();
         Game.newGame();
+
         console.log("Init done.");
     },
 
@@ -268,8 +267,7 @@ var Game = {
         state.score = 0;
         state.lives = 3;
 
-        document.getElementById('canvas').style.backgroundImage =
-            "url('img/logo.jpg')";
+        $("#canvas").css("backgroundImage", "url('img/logo.jpg')");
 
         var max = 6;
         var a = state.highScore.toString().split(), zeroesToAdd = max - a.length;
@@ -416,7 +414,7 @@ var Game = {
         else if (x ==0 && y == 1)
             direction = "bottom";
 
-        document.getElementById(direction + '-arrow').style.opacity = 0.4;
+        $("#" + direction + '-arrow').css("opacity", 0.4);
 
         setTimeout(function() {
             document.getElementById(direction + '-arrow').style.opacity = 0.7;
@@ -564,6 +562,6 @@ var Game = {
 };
 
 $(document).ready(function() {
-    ctx = document.getElementById('canvas').getContext("2d");
+    ctx = $("#canvas")[0].getContext("2d");
     Game.init();
 });
