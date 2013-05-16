@@ -225,19 +225,17 @@ var Game = {
                                     (window.innerWidth / 2 - 400 / 2));
         document.getElementById('main').style.left = marginLeft + "px";
 
-        document.onkeydown = function(e) {
-            e = e || window.event;
-
-            if (e.keyCode=='37') {
+        $(document).keydown(function(event) {
+            if (event.which == 37) {
                 Game.setDirection(-1, 0);
-            } else if (e.keyCode=='38') {
+            } else if (event.which == 38) {
                 Game.setDirection(0, -1);
-            } else if (e.keyCode=='39') {
+            } else if (event.which == 39) {
                 Game.setDirection(1, 0);
-            } else if (e.keyCode=='40') {
+            } else if (event.which == 40) {
                 Game.setDirection(0, 1);
             }
-        };
+        });
 
         $("#button").click(function() {
             console.log("Button clicked in state: " + state.state);
@@ -565,7 +563,7 @@ var Game = {
     }
 };
 
-window.onload = function() {
+$(document).ready(function() {
     ctx = document.getElementById('canvas').getContext("2d");
     Game.init();
-};
+});
